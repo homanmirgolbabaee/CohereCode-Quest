@@ -1,38 +1,55 @@
+import streamlit as st
+from weaviate import Client as WeaviateClient
+from weaviate.auth import AuthApiKey
 import cohere
-import weaviate
-from langchain.chains import SimpleChain
+import numpy as np
+from transformers import pipeline
 
+def main():
+    with st.sidebar:
+        option = st.radio("Settings", ("🔧Weaviate", "🦜️Langchain", "🌏Multi-Lingual Chatbot"))
 
-co = cohere.Client('your-api-key')
-client = weaviate.Client("http://[your-weaviate-instance]:8080")
+    if option == "🔧Weaviate":
+        st.write("Weaviate Settings and Information")  # Replace with actual Weaviate content
 
+    if option == "🦜️Langchain":
+        st.write("Langchain Settings and Information")  # Replace with actual Langchain content
 
-def query_weaviate(query):
-    # Use Weaviate's client to retrieve relevant information
-    pass
+    if option == "🌏Multi-Lingual Chatbot":
+        st.empty()
+        print("CHATBOT")
+        show_chatbot()
+        
 
-def receive_input():
-    # Function to receive input from the user
-    pass
+def show_chatbot():
+    st.title("Advanced Chatbot")
+    
+    # Initialize chat history
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-def process_input(user_input):
-    # Function to process the input (e.g., understanding intent)
-    pass
+    # Display chat messages from history on app rerun
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
-def generate_response(processed_input):
-    # Function to generate a response based on processed input
-    response = co.generate(prompt=processed_input, max_tokens=50).generations[0].text
-    return response
+    # Accept user input
+    prompt = st.chat_input("Type your message...")
+    if prompt:
+        # Display user message and add to chat history
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        st.session_state.messages.append({"role": "user", "content": prompt})
 
+        # Placeholder for response generation logic
+        response = "Placeholder response from the model"
 
-def use_langchain_for_translation(input_text, target_language):
-    # Use LangChain's capabilities here
-    pass
+        # Display the model's response
+        with st.chat_message("assistant"):
+            st.markdown(response)
 
-
-
-while True:
-    user_input = receive_input()
-    processed_input = process_input(user_input)
-    response = generate_response(processed_input)
-    print(response)
+        # Add model response to chat history
+        st.session_state.messages.append({"role": "assistant", "content": response})
+        
+if __name__ == "__main__":
+    main()
