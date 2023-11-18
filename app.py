@@ -344,7 +344,7 @@ if "messages" not in st.session_state:
 st.header("Customer Service Chatbot")
 
 
-st.markdown('<p style="font-size: 16px; font-style: italic;">Sample Prompts in English,Deutsch,Italian to test functionalities ... </p>', unsafe_allow_html=True)
+st.markdown('<p style="font-size: 16px; font-style: italic;">YOU CAN TYPE ANYTHING BUT IF YOU NEED Sample Prompts in English,Deutsch,Italian to test functionalities ...  ere are some examples ...</p>', unsafe_allow_html=True)
 
 # Bullet points with smaller italic text
 st.markdown('* <span style="font-size: 12px; font-style: italic;">Track My Order...</span>', unsafe_allow_html=True)
