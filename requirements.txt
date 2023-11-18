@@ -6,3 +6,4 @@ pandas
 langchain
 transformers
 tensorflow
+sentencepiece
