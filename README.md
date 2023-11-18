@@ -20,3 +20,17 @@ This application, crafted for the LablabAI Hackathon, is a multilingual customer
 1. **Clone the Repository**:
    ```bash
    git clone [repository-url]
+
+## 🚀 Setup
+- Set your API keys for Cohere,Weaviate and OpenAI. These should be configured in Streamlit's secrets or your environment variables.
+
+## 🌐 Running the Application
+- **Launch the application with Streamlit**:
+   ```bash
+   streamlit run app.py
+
+## 📖 Usage
+Language is set to "Auto" 🗣️ on the top right menu. (language detection feature)
+Enter your query in the chat interface 💻. 
+Receive and review the bot's response, including intent label and confidence score 📊.
+Use the sidebar to rate your experience and provide feedback 🌟.
