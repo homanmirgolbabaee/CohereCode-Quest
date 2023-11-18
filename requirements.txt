@@ -1,6 +1,6 @@
 streamlit
 cohere
-weaviate
+weaviate-client
 numpy
 pandas
 os
