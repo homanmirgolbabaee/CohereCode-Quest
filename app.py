@@ -232,14 +232,13 @@ def generate_bot_dialouge(input):
   co = cohere.Client(st.secrets["COHERE_API_KEY"]) # This is your trial API key
   response = co.generate(
     model='command',
-    prompt= 'generate a customer service chatbot response with the following information, generate is as short as possible , use proper emojis: '+input ,
+    prompt= 'Write a customer service chatbot response with the following information, your response should be as short as possible , use proper emojis: '+ f"{input}" ,
     max_tokens=244,
     temperature=0.9,
     k=0,
     stop_sequences=[],
     return_likelihoods='NONE')  
   return response.generations[0].text
-
 
 def detect_language(user_input):
   co = cohere.Client(st.secrets['COHERE_API_KEY']) # This is your trial API key
