@@ -24,14 +24,18 @@ from transformers import pipeline
 import time
 from weaviate.util import generate_uuid5
 import csv
+import base64
 
 
 
 
+def get_image_as_base64(file_path):
+    with open(file_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode()
 
-
-
-
+icon1_base64 = get_image_as_base64("icon1.png")
+lang_base64 = get_image_as_base64("lang.png")
+cohere_base64 = get_image_as_base64("cohere.png")
 
 
 # Basic setup
@@ -240,6 +244,7 @@ def generate_bot_dialouge(input):
     return_likelihoods='NONE')  
   return response.generations[0].text
 
+
 def detect_language(user_input):
   co = cohere.Client(st.secrets['COHERE_API_KEY']) # This is your trial API key
   response = co.classify(
@@ -319,7 +324,16 @@ with st.sidebar:
     st.header("Contact Information")
     st.write("https://github.com/homanmirgolbabaee/CohereCode-Quest")
     st.text("LablabAI Hackathon Product © 2023\nCohereCode Quest Team\nPowered by:\nCohere,Weaviate,Langchain")   
-        
+    # Adding logos at the bottom of the sidebar
+    st.markdown(
+        f'<img src="data:image/png;base64,{icon1_base64}" style="width:100px;height:100px;">', 
+        unsafe_allow_html=True)
+    st.markdown(
+        f'<img src="data:image/png;base64,{lang_base64}" style="width:100px;height:100px;">', 
+        unsafe_allow_html=True)
+    st.markdown(
+        f'<img src="data:image/png;base64,{cohere_base64}" style="width:100px;height:100px;">', 
+        unsafe_allow_html=True)  
 # Initialize chat history in session state if not already present
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -328,6 +342,14 @@ if "messages" not in st.session_state:
 # Main Chat Interface
 
 st.header("Customer Service Chatbot")
+
+
+st.markdown('<p style="font-size: 16px; font-style: italic;">Sample Prompts in English,Deutsch,Italian to test functionalities ... </p>', unsafe_allow_html=True)
+
+# Bullet points with smaller italic text
+st.markdown('* <span style="font-size: 12px; font-style: italic;">Track My Order...</span>', unsafe_allow_html=True)
+st.markdown('* <span style="font-size: 12px; font-style: italic;">Do You Accept Paypal?</span>', unsafe_allow_html=True)
+st.markdown('* <span style="font-size: 12px; font-style: italic;">Where is my Parcel?</span>', unsafe_allow_html=True)
 
 # Container for displaying chat history
 chat_history_container = st.container()
