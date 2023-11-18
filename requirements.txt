@@ -3,7 +3,6 @@ cohere
 weaviate-client
 numpy
 pandas
-os
 langchain
 transformers
 
