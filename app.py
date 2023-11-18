@@ -348,7 +348,7 @@ st.markdown('<p style="font-size: 16px; font-style: italic;">Sample Prompts in E
 
 # Bullet points with smaller italic text
 st.markdown('* <span style="font-size: 12px; font-style: italic;">Track My Order...</span>', unsafe_allow_html=True)
-st.markdown('* <span style="font-size: 12px; font-style: italic;">Do You Accept Paypal?</span>', unsafe_allow_html=True)
+st.markdown('* <span style="font-size: 12px; font-style: italic;">Traccia Il Mio Ordine?</span>', unsafe_allow_html=True)
 st.markdown('* <span style="font-size: 12px; font-style: italic;">Where is my Parcel?</span>', unsafe_allow_html=True)
 
 # Container for displaying chat history
