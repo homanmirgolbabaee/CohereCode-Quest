@@ -1,0 +1,11 @@
+streamlit
+cohere
+time
+weaviate
+numpy
+pandas
+os
+langchain
+asyncio
+transformers
+csv
