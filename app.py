@@ -2,18 +2,26 @@ import streamlit as st
 from cohere.responses.classify import Example
 import cohere
 import time
+from transformers import pipeline
+import streamlit as st
 from weaviate import Client as WeaviateClient
 from weaviate.auth import AuthApiKey
+import cohere
 import numpy as np
+from transformers import pipeline
 import pandas as pd
 import os
+import streamlit as st
 from weaviate import *
 import weaviate
 from weaviate.schema import Schema
+import cohere
 from langchain.schema import Document
 from langchain.document_transformers import GoogleTranslateTransformer
+import os 
 import asyncio
 from transformers import pipeline
+import time
 from weaviate.util import generate_uuid5
 import csv
 
@@ -41,11 +49,24 @@ def generate_response(label):
     stop_sequences=[],
     return_likelihoods='NONE')
     print('Prediction: {}'.format(response.generations[0].text))
+    
     return response.generations[0].text
   
 
+def gigachad_summarizer(prompt):
+    co = cohere.Client(st.secrets["COHERE_API_KEY"]) # This is your trial API key
+    response = co.summarize( 
+        text=prompt,
+        length='short',
+        format='bullets',
+        model='command',
+        additional_command='',
+        temperature=0.3,
+    ) 
+  
+    print('Summary:', response.summary)
 
-
+    return response.summary
 
 
 def Initilalize_Weaviate_feedback():
@@ -186,7 +207,12 @@ def process_intent(prompt):
   Example("where can i change my shipping address? ","Shipping Address"),
   Example("Is there a policy on changing shipping address?","Shipping Address"),    
   Example("what is the policy for lost package ?","Terms and Conditions"),
-  Example("what if i dont get my package for over 30 days?","Terms and Conditions")
+  Example("what if i dont get my package for over 30 days?","Terms and Conditions"),
+  Example("Do you Accept my Credit Card? ","Payment & Credit Card"),
+  Example("Do you Accept Debit Card? ","Payment & Credit Card"),
+  Example("Do you Accept PayPal? ","Payment & Credit Card"),
+  Example("How can i Reset My Password? ","Login & Account Setting"),
+  Example("I cant login ", "Login & Account Setting")
   ]
   
   response = co.classify(
@@ -202,7 +228,17 @@ def process_intent(prompt):
 
   return highest_score_classification, highest_score_confidence
 
-
+def generate_bot_dialouge(input):
+  co = cohere.Client(st.secrets["COHERE_API_KEY"]) # This is your trial API key
+  response = co.generate(
+    model='command',
+    prompt= 'generate a customer service chatbot response with the following information, generate is as short as possible , use proper emojis: '+input ,
+    max_tokens=244,
+    temperature=0.9,
+    k=0,
+    stop_sequences=[],
+    return_likelihoods='NONE')  
+  return response.generations[0].text
 
 
 def detect_language(user_input):
@@ -225,7 +261,8 @@ def translate_text(text, source_lang, target_lang):
             'en-fr': 'Helsinki-NLP/opus-mt-en-fr',
             'es-en': 'Helsinki-NLP/opus-mt-es-en',
             'en-it': 'Helsinki-NLP/opus-mt-en-it',
-            'it-en': 'Helsinki-NLP/opus-mt-it-en'
+            'it-en': 'Helsinki-NLP/opus-mt-it-en',
+            'de-en': 'Helsinki-NLP/opus-mt-de-en'
         }
     model_key = f'{source_lang}-{target_lang}'
     if model_key in language_pairs:
@@ -324,33 +361,80 @@ if prompt:
 
     # Process user's message and get bot response
     try:
-        
+
+        bot_response = " "
         if lan == "Deutsch":
-            bot_response = translate_text(prompt, 'en', 'de')  # Modify language pair as needed
+            prompt = translate_text(prompt,"de","en")
         if lan == "Italian":
-            bot_response = translate_text(prompt,'en','it')
-        if lan == "English":
-            bot_response = " "
-            
+            prompt = translate_text(prompt,"it","en")
         inputs=[f"{prompt}"]
         label,score = process_intent(inputs)
         print(label,score)
+        
+        ## detecting intent 
+        
         if label == "Track order":
             su = generate_response("Track Order")
             bot_response = su + bot_response
+            bot_response = gigachad_summarizer(bot_response) 
+            bot_response = generate_bot_dialouge(bot_response)
+            if lan == "Deutsch":
+
+                bot_response = translate_text(bot_response, 'en', 'de')
+            if lan == "Italian":
+
+                bot_response = translate_text(bot_response, 'en', 'it')
+                
         if label == "Shipping and handling policy":
             su1 = generate_response("Shipping and handling policy")
             bot_response = su1 + bot_response
+            bot_response = gigachad_summarizer(bot_response)            
+            bot_response = generate_bot_dialouge(bot_response)
+            if lan == "Deutsch":
+ 
+                bot_response = translate_text(bot_response, 'en', 'de')
+            if lan == "Italian":
+
+                bot_response = translate_text(bot_response, 'en', 'it')
+                                
         if label == "Start return or exchange":
+            
             su2 = generate_response("Start return or exchange")
             bot_response = su2 + bot_response
+            bot_response = gigachad_summarizer(bot_response)  
+            bot_response = generate_bot_dialouge(bot_response)
+            if lan == "Deutsch":
+ 
+                bot_response = translate_text(bot_response, 'en', 'de')
+            if lan == "Italian":
+
+                bot_response = translate_text(bot_response, 'en', 'it')
+                
+                
         if label == "Shipping Address":
             su3 = generate_response("Shipping Address")
             bot_response = su3+bot_response
+            bot_response = gigachad_summarizer(bot_response)  
+            bot_response = generate_bot_dialouge(bot_response)
+            if lan == "Deutsch":
+ 
+                bot_response = translate_text(bot_response, 'en', 'de')
+            if lan == "Italian":
+
+                bot_response = translate_text(bot_response, 'en', 'it')            
+            
         if label == "Terms and Conditions":
             su4 = generate_response("Terms and Conditions")
             bot_response = su4+bot_response
-            
+            bot_response = gigachad_summarizer(bot_response)  
+            bot_response = generate_bot_dialouge(bot_response)
+            if lan == "Deutsch":
+ 
+                bot_response = translate_text(bot_response, 'en', 'de')
+            if lan == "Italian":
+
+                bot_response = translate_text(bot_response, 'en', 'it')        
+                            
         bot_response = bot_response +"\n✍️Score: " + str(score) + "\n🏷️Label: "+str(label)
 
         # Add bot response to chat history and display it
